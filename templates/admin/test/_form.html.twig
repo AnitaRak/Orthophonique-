@@ -1,0 +1,114 @@
+{% block body %}
+	<div class="col-10 mx-auto">
+		<form method="POST">
+			<div class="form-group">
+				{{ form_start(testForm) }}
+
+				<div class="d-flex justify-content-center mb-4">
+					<button type="button" id="validationForm" class="w-100 btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+				</div>
+
+				{{ form_row(testForm.active) }}
+				{{ form_row(testForm.typeTest) }}
+				{{ form_row(testForm.name) }}
+				{{ form_row(testForm.is_timed) }}
+				{{ form_row(testForm.timer) }}
+				{{ form_row(testForm.instructions_fr) }}
+				{{ form_row(testForm.instructions_cr) }}
+				{{ form_row(testForm.implementation_advice) }}</div>
+			<div class="form-group">
+				<h3 class="text-center">
+					Questions posées pour chaque item de cette épreuve
+				</h3>
+				<p class="text-center" id="templateQuestionInfos" data-toggle="tooltip" data-placement="top" title="Exemples : 'Production de l'enfant' est une question, ainsi que 'Niveau d'aide'">
+					Liste des questions qui doivent être posées pour chaque item de l'épreuve
+				</p>
+				<div class="row justify-content-center">
+					<div class="text-center mb-3">
+						<button class="btn btn-primary add_template_question_link" data-collection-holder-class="templateQuestions">
+							Ajouter une question
+						</button>
+					</div>
+				</div>
+				<div id="templateQuestionList" class="templateQuestions" data-index="{{ testForm.templateQuestions|length > 0 ? testForm.templateQuestions|last.vars.name + 1 : 0 }}" data-prototype="{{ form_widget(testForm.templateQuestions.vars.prototype)|e('html_attr') }}">
+					{% for tQuestion in testForm.templateQuestions %}
+						<div class="card mb-3 template-question-box" data-question-index="{{ loop.index }}">
+							<div class="card-body">
+								<h4 class="card-title">Question n°
+									{{ loop.index }}</h4>
+								{{ form_row(tQuestion.is_included_in_total_score, {'attr': {'class': 'form-check-input mb-2'}}) }}
+								{{ form_row(tQuestion.instructions_fr, {'attr': {'class': 'form-control mb-2'}}) }}
+								{{ form_row(tQuestion.instructions_cr, {'attr': {'class': 'form-control mb-2'}}) }}
+								{{ form_row(tQuestion.requires_audio, {'attr': {'class': 'form-check-input mb-2'}}) }}
+								{{ form_row(tQuestion.requires_text, {'attr': {'class': 'form-check-input mb-2'}}) }}
+								{{ form_row(tQuestion.is_mcq, {'attr': {'class': 'form-check-input mb-2 target-qt-mcq'}}) }}
+								{{ form_row(tQuestion.is_custom_score, {'attr': {'class': 'form-check-input mb-2'}}) }}
+								{% if tQuestion.vars.value.ismcq %}
+									<div class="text-center" data-question-index="{{ loop.index }}">
+										<div class="">
+											<h5 class="card-title">Réponses possibles pour cette question</h5>
+											<table class="table table-bordered table-striped text-center align-middle">
+												<thead>
+													<tr class="align-middle">
+														<th>Valeur</th>
+														<th>Détail de la valeur</th>
+														<th>Score</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<span class="templateValueList templateValues" data-tq-id={{ tQuestion.vars.value.id }} data-index="{{ tQuestion.templateValues|length > 0 ? tQuestion.templateValues|last.vars.name + 1 : 0 }}" data-prototype="{{ form_widget(tQuestion.templateValues.vars.prototype)|e('html_attr') }}">
+														{% for tValue in tQuestion.templateValues %}
+															<tr>
+																<td>{{ form_row(tValue.name) }}</td>
+																<td>{{ form_row(tValue.complete_name) }}</td>
+																<td>{{ form_row(tValue.score) }}</td>
+																<td>
+																	{% if app.request.attributes.get('_route') == 'admin_test_edit' and tQuestion.vars.value.id is defined %}
+																		<a class="btn btn-outline-danger w-100" href="{{ path('admin_templatequestion_delete_templatevalue', {id: tValue.vars.value.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ tValue.vars.value.id) }}">Supprimer cette option</a>
+																	{% endif %}
+																</td>
+															</tr>
+														{% endfor %}
+													</span>
+												</tbody>
+											</table>
+											<!-- Récupérer ces valeurs -->
+											<button class="btn btn-primary add_template_value_link" data-collection-holder-class="templateValues" data-tq-id={{ tQuestion.vars.value.id }} data-element-index={{tQuestion.vars.value.id}}>
+												Ajouter une valeur
+											</button>
+										</div>
+									</div>
+								{% endif %}
+								{% if app.request.attributes.get('_route') == 'admin_test_edit' and tQuestion.vars.value.id is defined %}
+									<div class="row justify-content-center mt-2">
+										<div class="text-center">
+											<a class="btn btn-outline-danger" href="{{ path('admin_test_delete_template_question', {id: tQuestion.vars.value.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ tQuestion.vars.value.id) }}">Supprimer cette question</a>
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				{{ form_end(testForm) }}
+			</div>
+		</form>
+		{% if app.request.attributes.get('_route') == 'admin_test_edit' %}
+
+			{% include "test/_singletestitemslist.html.twig" with {'testRoute' : test.id } %}
+
+			<div class="text-center mt-3">
+				<a href="{{ path('admin_item_add', { testId: test.id })}}" class="m-3 mt-0 btn btn-primary">
+					Ajouter un item
+				</a>
+			</div>
+		{% endif %}
+		<div class="text-center">
+			<a href="{{ path('admin_test_index') }}" class="m-3 mt-0 btn btn-outline-primary">
+				Revenir à la liste des épreuves
+			</a>
+		</div>
+
+
+	{% endblock %}

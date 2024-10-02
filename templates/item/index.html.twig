@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Liste des items
+{% endblock %}
+{% block body %}
+<div class="container m-5">
+	<div class="row">
+		<h1>Liste des items</h1>
+		{% for item in items %}
+			<div class="card h-100 col-3">
+				{% if item.illustrations.count() > 0%}
+					<img src="{{ asset('images/uploads/item/mini/500x500-' ~ item.illustrations[0].path ) }}" alt="{{ 'illustration500x500-' ~ item.illustrations[0].item.namefr}}" width="150">
+				{% endif %}
+				<div class="card-body">
+					{% include "/item/_itemcardbody.html.twig"%}</div>
+			</div>
+		{% endfor %}
+	</div>
+</div {% endblock %}

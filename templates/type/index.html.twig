@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Liste des types d'épreuve
+{% endblock %}
+
+{% block body %}
+	<main class="container">
+		<section class="row">
+			<div class="col-12">
+				<h1>Liste des types d'épreuve</h1>
+			</div>
+		</section>
+		{% for type in types %}
+			<div class="card h-100" style="width: 18rem;">
+				<div class="card-body">
+					<h2 class="card-title">
+						<a href="{{ path('type_list', {id: type.id})}}">{{type.name | capitalize }}</a>
+					</h2>
+					<ul class="list-group list-group-flush">
+						{% for test in type.tests %}
+							<li class="list-group-item">
+								<p>
+									<a href="{{ path('test_detail', {id : test.id})}}">{{test.name}}</a>
+								</p>
+								<p></p>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		{% endfor %}
+	</main>
+{% endblock %}

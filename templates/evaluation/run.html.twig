@@ -1,0 +1,211 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Evaluation
+{% endblock %}
+
+{% block body %}
+	<div class="container main-container">
+		<div class="card m-3">
+			<div class="text-center">
+
+				<h1 class="text-Blue text-center m-3 mb-4">{{test.name}}</h1>
+
+				<input type="hidden" name="patient" value="{{patient.id}}">
+				<input type="hidden" name="test" value="{{test.id}}">
+				<input type="hidden" name="nbItem" value="{{ items.count() }}">
+				{% set nbQuestion = 0 %}
+				{% set cpt = 1 %}
+
+				{#
+				on parcours les items de l'épreuve 
+				#}
+				{% for item in items %}
+					<div class="{{item.sequence}} " style="display:none">
+						{#
+						si : l'item contient au moins une image on les affiches dans un caroussel 
+						sinon : on affiche son nom en français
+						#}
+						{% if item.illustrations.count() > 0 %}
+							<div id="carouselItemIllustrations" class="carousel slide" data-bs-ride="carousel">
+								<div class="carousel-indicators">
+									{% for iteration in 1..item.illustrations|length %}
+										<button type="button" data-bs-target="#carouselItemIllustrations" data-bs-slide-to="{{ iteration - 1 }}" {{ (loop.first) ? 'class="active" aria-current="true"' : '' }} aria-label="Slide {{ iteration }}"></button>
+									{% endfor %}
+								</div>
+								<div class="carousel-inner">
+									{% for illustration in item.illustrations %}
+										<div class="carousel-item {{ (loop.first) ? 'active center-active' : '' }}">
+											<img src="{{ asset('images/uploads/item/mini/500x500-' ~ illustration.path) }}" alt="{{ 'illustration500x500-' ~ illustration.item.namefr }}" width="350"/>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+						{% else %}
+							<h3>{{item.namefr}}</h3>
+						{% endif %}
+						{#
+						Formulaire d'evaluation : chaque item est placé dans une div et est affiché un par un.
+						#}
+						<form id="form{{item.sequence}}">
+							{% set responseInDb = false %}				
+							{% for question in item.questions %}
+
+								{% set responseCourant = null %}
+
+								{% for response in item.responses %}
+									{# 
+									si : le patient à déjà répondu a cette item dans l'evaluation on recupère la dernière réponse  
+									#}
+									{% if response.patient.id == patient.id and evaluation.id == response.evaluation.id %}
+										{% set responseInDb  = true %}
+										{% set responseCourant = response %}
+									{% endif %}
+								{% endfor %}
+								 
+
+								{# Gestion de l'input texte #}
+								{% if question.templateQuestion.requiresText %}
+									<label>texte</label>
+									{# s'il n'a pas encore répondu on affichet un input text vide #}
+									{% if responseInDb %}
+										<input type="text" name="texte" required="required" value={{responseCourant.text}}>
+									{% else %}
+										<input type="text" name="texte" required="required">
+									{% endif %}
+								{% endif  %}
+								
+								<input type="hidden" name="question{{nbQuestion}}" value="{{question.id}}">
+
+								{# Gestion des options multiple  #}
+								{% if question.optionResponses.count() > 1 %}
+									{% set valName = "" %}
+									<div>
+										{% if responseCourant == null %}
+
+											<div class="btn-group m-3">
+												{% for option in question.optionResponses %}
+													<input type="radio" class="btn-check" name="choix{{question.id}}" id="choix{{question.id}}_{{loop.index}}" value="{{option.templateValue.score}}" data-tvalue="{{option.templateValue.name}}" autocomplete="off" required="required">
+													<label class="btn btn-outline-secondary" for="choix{{question.id}}_{{loop.index}}">
+															{{option.name}}
+													</label>
+												{% endfor %}
+											</div>
+										{% else %}
+											{#
+											on récupère le nom du score de la réponse courante pour pouvoir cocher la case dans l'input radio plus bas.
+											concerne les réponses dans la BDD
+											#}
+											{% for score in responseCourant.scores %}
+												{% if score.question.id == question.id %}
+													{% set valName = score.valuename %}
+												{% endif %}
+											{% endfor %}
+											<div class="btn-group m-3">
+												{% for option in question.optionResponses %}
+													{#
+													on coche l'option de réponse enregistrée dans la BDD pour la RéponseCourante et on affiche les autres options de réponses décochées.
+													#}
+													{% if valName == option.templateValue.name %}
+														<input type="radio" class="btn-check" name="choix{{question.id}}" id="choix{{question.id}}_{{loop.index}}" value="{{option.templateValue.score}}" data-tvalue="{{option.templateValue.name}}" autocomplete="off" required="required" checked>
+														<label class="btn btn-outline-secondary" for="choix{{question.id}}_{{loop.index}}">
+															{{option.name}}
+														</label>
+													{% else %}
+														<input type="radio" class="btn-check" name="choix{{question.id}}" id="choix{{question.id}}_{{loop.index}}" value="{{option.templateValue.score}}" data-tvalue="{{option.templateValue.name}}" autocomplete="off" required="required">
+														<label class="btn btn-outline-secondary" for="choix{{question.id}}_{{loop.index}}">
+															{{option.name}}
+														</label>
+													{% endif %}
+												{% endfor %}
+											</div>
+										{% endif %}
+									</div> 
+								
+								{% set nbQuestion = nbQuestion + 1 %}
+								{% else %}
+									{% set valName = "" %}
+									<div>
+										{#
+										si :le patient viens de démarrer l'évaluation (pas de réponses enregistrées dans la BDD pour cette épreuve) alors 
+										sinon
+										#}
+										{% if responseCourant == null %}
+											<div class="btn-group m-3">
+												{% for templatevalue in question.templatequestion.templatevalues %}
+													<input type="radio" class="btn-check" name="choix{{ question.id }}" id="choix{{ question.id }}_{{ loop.index }}" value="{{ templatevalue.score }}" data-tvalue="{{ templatevalue.name }}" data-question="{{ question.id }}" autocomplete="off" required="required">
+													<label class="btn btn-outline-secondary" for="choix{{ question.id }}_{{ loop.index }}">
+														{{ templatevalue.name }}
+													</label>
+												{% endfor %}
+											</div>
+
+										{% else %}
+											{% for score in responseCourant.scores %}
+												{% if score.question.id == question.id %}
+													{% set valName = score.valuename %}
+
+												{% endif %}
+											{% endfor %}
+											<div class="btn-group m-3">
+												{% for templatevalue in question.templatequestion.templatevalues %}
+													{% if valName == templatevalue.name %}
+														<input type="radio" class="btn-check" name="choix{{ question.id }}" id="choix{{ question.id }}_{{ loop.index }}" value="{{ templatevalue.score }}" data-tvalue="{{ templatevalue.name }}" data-question="{{ question.id }}" autocomplete="off" required="required" checked>
+														<label class="btn btn-outline-secondary" for="choix{{ question.id }}_{{ loop.index }}">
+															{{ templatevalue.name }}
+														</label>
+													{% else %}
+														<input type="radio" class="btn-check" name="choix{{ question.id }}" id="choix{{ question.id }}_{{ loop.index }}" value="{{ templatevalue.score }}" data-tvalue="{{ templatevalue.name }}" data-question="{{ question.id }}" autocomplete="off" required="required">
+														<label class="btn btn-outline-secondary" for="choix{{ question.id }}_{{ loop.index }}">
+															{{ templatevalue.name }}
+														</label>
+													{% endif %}
+												{% endfor %}
+											</div>
+										{% endif %}
+									</div>
+									{% set nbQuestion = nbQuestion + 1 %}
+								{% endif %}
+							{# {% endif %} #}
+
+								{% if question.templateQuestion.requiresAudio %}
+									<p>Un fichier audio doit être enregistré</p>
+								{% endif %}
+
+								{% if question.templateQuestion.isCustomScore %}
+									<p>Un score doit être manuellement saisi</p>
+								{% endif %}
+
+							{% endfor %}
+							<input type="hidden" name="nbQuestion" value="{{nbQuestion}}">
+							{% set nbQuestion = 0 %}
+						</form>
+						<div class="d-flex justify-content-center mt-3">
+							<button class="m-3 mt-0 btn btn-secondary" type="button" id="preced{{item.sequence}}" class="m-3 mt-0 btn btn-light" onclick="questionP()">Question précédente</button>
+							<button class="m-3 mt-0 btn btn-primary" id="submit{{item.sequence}}" data-item="{{ item.id }}" onclick="AjaxReq()">Question suivante</button>
+						</div>
+						<input type="hidden" name="skip" value="{{responseInDb}}">
+
+						<div class="text-center">
+							<h5 class="font-weight-bold mb-3">Question n°
+								{{ cpt }}/{{ items.count() }}</h5>
+						</div>
+
+						{% set cpt=cpt+1 %}
+					</div>
+				{% endfor %}
+				<div class="end" style="display:none">
+					<h3>vous avez répondu à toutes les questions
+					</h3>
+					<a class="btn btn-primary m-4" href="/">Terminer</a>
+				</div>
+
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{parent()}}
+ <script src="{{ asset('js/jquery-3.7.1.min.js') }}"></script>
+	 <script src="{{ asset('js/evaluation.js') }}"></script>
+{% endblock %}

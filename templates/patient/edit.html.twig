@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Modifier un compte patient{% endblock %}
+
+{% block body %}
+    <div class="container main-container">
+        <div class="card col-md-4 my-5 mx-auto shadow">
+
+                <div class="card-header text-center">
+                            {#Logo Du Site <img src="votre-logo.png" alt="Votre logo" width="80"> #}
+                            <h1 class="h3 mt-3">Modifier un compte patient</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-10 mx-auto mt-3">
+                            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+
+                            <div class="form-group">
+                                {{ form_row(form.name, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form_row(form.last_name, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form_row(form.birth_date, {'attr': {'class': ''}}) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form_row(form.school_grade, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form_row(form.gender, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+
+                            <div class="form-group text-center">
+                                {{ form_row(form.enregistrer, {'attr': {'class': 'btn btn-primary btn-lg my-3'}}) }}
+                            </div>
+
+                            {{ form_end(form) }}
+                        
+                    </div>
+                </div>
+
+        </div>
+    </div>
+{% endblock %}

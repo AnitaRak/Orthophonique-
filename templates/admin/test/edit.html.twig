@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Béocler - Modifier une épreuve
+{% endblock %}
+{% block javascripts %} <script src="{{ asset('js/deletechild.js')}}"></script>
+	 <script src="{{ asset('js/templateValueCreationForm.js')}}"></script>
+	 <script src="{{ asset('js/testCreationForm.js')}}"></script>
+{% endblock %}
+
+{% block body %}
+	<div class="container main-container ">
+		<div class="row justify-content-center align-items-center">
+			<div class="m-3 card col-8">
+				<h1 class="text-Blue text-center m-3 mb-4">
+					Modifier
+					{{test.name}}
+				</h1>
+
+				{% include "admin/test/_form.html.twig" with {'button_label': 'Enregistrer'} %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

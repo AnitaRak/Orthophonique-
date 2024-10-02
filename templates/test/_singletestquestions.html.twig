@@ -1,0 +1,101 @@
+{% block body %}
+	<h3 class="title mt-4" > Consignes </h3>
+	<section class="card d-flex align-items-center justify-content-center m-4">
+			
+			
+			<div class="row d-flex align-items-center justify-content-center mt-3">
+				
+				<div class="col-5">
+					<div class="card h-100">
+						<h3 class="card-header">Consigne en français</h3>
+						<div class="card-body">
+							<p>{{test.instructionsfr}}</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-5">
+					<div class="card h-100">
+						<h3 class="card-header">Consigne en créole</h3>
+						<div class="card-body">
+							<p>{{test.instructionscr}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col col-sm-10 text-center mt-3 mb-3">
+				<div class="card h-100">
+					<h3 class="card-header">Précisions sur le déroulement</h3>
+					<div class="card-body">
+						<p>{{test.implementationadvice}}</p>
+						{% if test.isTimed == false %}
+							<p>Items non chronométrés</p>
+						{% elseif test.isTimed == true %}
+							<p>Items chronométrés</p>
+						{% endif %}
+						</p>
+					</div>
+				</div>
+			</div>
+	</section>
+
+	<aside class="row mt-5 ">
+		<h2 class="title">Questions associées à chaque item</h2>
+		{% if test.templateQuestions.count() > 0%}
+			{% if test.templateQuestions.count() > 1%}
+				<p>
+					<strong>{{test.templateQuestions.count()}}
+						questions sont posées pour chaque item de cette épreuve.</strong>
+				</p>
+			{% else %}
+				<p>
+					<strong>{{test.templateQuestions.count()}}
+						question est posée pour chaque item de cette épreuve.</strong>
+				</p>
+			{% endif %}
+			{% for templateQuestion in test.templateQuestions %}
+			<div class="d-flex align-items-center justify-content-center mt-3">
+				<div class="card h-100 col-6">
+					<h3 class="card-header">{{templateQuestion.instructionsFr}}</h3>
+					<div class="card-body">
+						<p>Cette question
+							{% if templateQuestion.isIncludedInTotalScore %}
+								est prise en compte
+							{% else %}
+								n'est pas prise en compte
+							{% endif %}
+							dans le calcul du score total de l'épreuve.</p>
+						{% if templateQuestion.isMCQ == true %}
+							<p>Liste des valeurs :</p>
+							<table class="table table-bordered table-striped text-center align-middle">
+								<thead>
+									<tr>
+										<th scope="col">Valeur</th>
+										<th scope="col">Détail de la valeur</th>
+										<th scope="col">Score associé</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for option in templateQuestion.templateValues %}
+										<tr>
+											<th>{{option.name | capitalize}}</th>
+											<th>{{option.completeName | capitalize}}</th>
+											<th>{{option.score | capitalize}}</th>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						{% elseif templateQuestion.requiresText == true %}
+							<p>Demande la saisie d'un texte</p>
+						{% elseif templateQuestion.requiresAudio == true %}
+							<p>Enregistrement d'un son audio</p>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		{% elseif test.templateQuestions.count() == 0 %}
+			<p>Aucune question n'est associée aux items présentés dans ce test</p>
+		{% endif %}
+	</aside>
+
+{% endblock %}

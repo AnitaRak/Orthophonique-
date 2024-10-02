@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Béocler - Accueil
+{% endblock %}
+
+{% block nav %}
+	{{ parent() }}
+	{# Insère le contenu du bloc parent nav dans cette page html twig #}
+{% endblock %}
+
+{% block body %}
+
+	{% if app.user %}
+		{# Si l'utilisateur est connecté #}
+		<div class="container">
+			<div class="card main-container mx-auto m-4">
+				<div class="card">
+					<div class="card-body">
+						<h1 class="card-title text-center">Bienvenue,
+							{{ app.user.name }}!</h1>
+						<p class="card-text text-center">Vous êtes connecté(e) avec l'identifiant :
+							{{ app.user.id }}</p>
+					</div>
+				</div>
+
+				<div class="mt-5">
+					<div class="jumbotron text-center">
+						<h2>Explorez les fonctionnalités du site Béocler</h2>
+						<p class="lead">Découvrez ce que vous pouvez faire avec notre service.</p>
+						<hr
+						class="my-4 mx-auto col-9">
+						{# FIXME : This should be handled in a controller #}
+						{% set isAdmin = is_granted('ROLE_ADMIN') %}
+
+
+						{% if isAdmin  %}
+
+							<div class="alert alert-info">
+
+
+								<h1>Vous avez
+									<a href="{{ path('admin_users_ModerUsers') }}">
+										<span class="text-danger">{{ newUserCount }}</span>
+									</a>
+									nouveau utilisateur(s) à moderer
+								</h1>
+
+
+							</div>
+
+						{% else   %}
+
+							{% if app.user and app.user.getIsVerified() and app.user.getInscriptionStatus() == 'valide' %}
+								<p>Nous proposons les fonctionnalités suivantes :</p>
+								<div class="row mt-3">
+									<div class="col-md-4">
+										<h3>Passez des épreuves</h3>
+										<p>Consultez la liste des épreuves disponibles.</p>
+										<a class="btn btn-primary " href="{{ path('test_index')}}">Accéder à la liste</a>
+									</div>
+									<div class="col-md-4">
+										<h3>Mes évaluations</h3>
+										<p>Consultez vos évaluations personnelles.</p>
+										<a class="btn btn-primary" href="{{ path('app_evaluation_evaluations') }}">Accéder à mes évaluations</a>
+									</div>
+									<div class="col-md-4">
+										<h3>Gestion des patients</h3>
+										<p>Gérez les informations relatives aux patients.</p>
+										<a class="btn btn-primary mb-3" href="/patient">Accéder à la liste de vos patients</a>
+									</div>
+								</div>
+							{% endif %}
+
+						{% endif %}
+
+					</hr>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+{% else %}
+	{# Si l'utilisateur n'est pas connecter (Index page d'acceuil de présentation BEOCLER) :NO LOG #}
+	<div class="container">
+		<div class="main-container my-4">
+			<div class="alert alert-warning">
+				<h1 class="text-Blue">Bienvenue sur le site de Béocler</h1>
+			</div>
+			<div class="card mb-4">
+				<div class="card-body">
+
+					<p>Le
+						<strong>BÉOCLER®</strong>
+						(Batterie d'Évaluation Orthophonique des Compétences Langagières des Enfants Réunionnais) est une batterie d'évaluation du langage oral, destinée aux enfants de la grande section à la fin du primaire. Il a été mis au point par
+						<strong>Audrey Noël</strong>
+						en 2015.</p>
+					<p>Cette batterie est contextualisée culturellement et linguistiquement pour répondre aux besoins spécifiques des enfants réunionnais. Elle a été conçue pour intervenir auprès de personnes de tous âges, dès lors que la communication est entravée. L'évaluation, qui s'appuie sur le concept de norme, est une étape fondamentale.</p>
+					<p>Les orthophonistes exerçant à La Réunion sont confrontés à de multiples difficultés lors de l'évaluation langagière : outils et normes inadaptés, connaissances limitées du terrain réunionnais. Le BÉOCLER® vise à répondre à ces défis en fournissant un outil adapté au contexte local.</p>
+					<p>Dans le cadre d'un des axes de recherche du pôle linguistique du laboratoire LCF, une réflexion sur les approches évaluatives et diagnostiques des troubles du langage en contexte plurilingue a été amorcée. Ce travail répondait à une demande forte du terrain, compte tenu de l'absence d'outils adaptés au contexte linguistique réunionnais.</p>
+					<p>Notre site actuel est en cours de développement pour devenir une web-app dédiée à la mise à disposition des outils existants pour les professionnels de santé ciblés, en particulier les orthophonistes. Avec l’essor des web-apps au cours de la dernière décennie, notre plateforme s’inscrit dans cette tendance en offrant une diversité de matériel pour l’évaluation, la rééducation et la gestion administrative. Notre objectif est de fournir une ressource précieuse et facilement accessible pour les professionnels de santé dans leur pratique quotidienne.</p>
+					<p>Pour plus d'informations ou pour toute question, n'hésitez pas à contacter
+						<strong>Audrey Noël</strong>.
+					</p>
+
+				</div>
+			</div>
+
+			<div class="text-center mt-5">
+				<div class="alert alert-info" role="alert">
+					<h4 class="alert-heading">Vous êtes un professionnel ?</h4>
+					<p>
+						<a href="/login" class="alert-link">Connectez-vous</a>
+						ou
+						<a href="/register" class="alert-link">faites une demande d'inscription</a>
+						pour accéder à nos services.
+					</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+{% endif %}{% endblock %}

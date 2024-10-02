@@ -1,0 +1,13 @@
+.main-container {
+  min-height: 65vh;
+}
+
+.badge-red {
+  background-color: red;
+  color: white;
+}
+
+.patient-row:hover {
+  cursor: pointer; /* Change le curseur de la souris au survol */
+  background-color: blue; /* Change la couleur de fond au survol */
+}

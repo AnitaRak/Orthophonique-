@@ -1,0 +1,70 @@
+{% block body %}
+	<form method="POST" enctype="multipart/form-data">
+		<div class="text-center">
+			<div class="form-group">
+				{{ form_start(itemForm) }}
+
+				{{ form_row(itemForm.test, { 'attr': {'class': 'test-select'} }) }}
+				{{ form_row(itemForm.name_cr) }}
+				{{ form_row(itemForm.name_fr) }}
+				{{ form_row(itemForm.school_grade) }}
+				<!-- Symfony displays this field by default, we want to hide that -->
+				<div style="display: none">
+					{{ form_row(itemForm.templateQuestion, {'attr': {'style': 'display: none'},'block_prefixes': ['hidden']}) }}
+				</div>
+				
+
+				<!-- Illustrations -->
+				<div class="form-group">
+					{% if app.request.attributes.get('_route') == 'admin_item_edit' %}
+						{% for illustration in item.illustrations %}
+							<div>
+								<img src="{{ asset('images/uploads/item/mini/500x500-' ~ illustration.path ) }}" alt="illustration" width="150">
+								<a href="{{ path('admin_item_delete_illustration', {id: illustration.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ illustration.id) }}">Supprimer</a>
+							</div>
+						{% endfor %}
+					{% endif %}
+					<span data-toggle="tooltip" data-placement="top" title="Toutes les images doivent être au format carré.">
+						{{ form_row(itemForm.illustrations) }}
+					</span>
+				</div>
+			</div>
+
+			<!-- Questions affichées -->
+			{% if app.request.attributes.get('_route') == 'admin_item_edit' %}
+				<div class="card col-12 mt-5">
+					<div class="card-body">
+						<h3 class="card-title">Questions et options de réponse actuellement associées à cet item</h3>
+						{% include "/item/_itemcardquestion.html.twig" %}
+					</div>
+				</div>
+			{% endif %}
+
+			<!-- Questions -->
+			<div id="questionList" class="questions" data-index="{{ itemForm.questions|length > 0 ? itemForm.questions|last.vars.name + 1 : 0 }}" data-prototype="{{ form_widget(itemForm.questions.vars.prototype)|e('html_attr') }}">
+				{% for question in itemForm.questions %}
+					<div>
+						<!-- Since a questionFormType in embad in item form, Symfony display fields by default. We don't want these to appear -->
+						<div style="display: none">
+							{{ form_row(question.templateQuestion, {'attr': {'style': 'display: none'},'block_prefixes': ['hidden']}) }}
+							{{ form_row(question.active, {'attr': {'style': 'display: none'},'block_prefixes': ['hidden']}) }}
+							{{ form_row(question.item, {'attr': {'style': 'display: none'},'block_prefixes': ['hidden']}) }}
+							{{ form_row(question.optionResponses, {'attr': {'style': 'display: none'},'block_prefixes': ['hidden']}) }}
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+			<div class="mx-auto d-flex justify-content-center align-items-center mt-2">
+				<button type="submit" class="btn btn-primary" >{{ button_label|default('Ajouter') }}</button>
+			</div>
+			{{ form_end(itemForm) }}
+		</div>
+	</form>
+
+	<form action="{{ path('admin_item_index') }}" class="mx-auto mt-2">
+		<button type="submit" class="m-3 mt-0 btn btn-secondary">
+			Revenir à la liste des items
+		</button>
+	</form>
+{% endblock %}

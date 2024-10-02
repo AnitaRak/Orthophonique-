@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Evaluation
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container">
+		<div class="card m-3">
+			<div>
+				<h1 class="text-Blue text-center m-3 mb-4">{{test.name}}</h1>
+				<h3 class="text-center">Les consignes pour cette épreuve</h3>
+
+				<div class="row text-center mx-auto justify-content-center mb-4 mt-4">
+					<div class="col-md-4">
+						<div class="card">
+							<h5 class="card-header">Instructions en français</h5>
+							<div class="card-body">
+								<p class="card-text">{{ test.instructionsfr }}</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+							<h5 class="card-header">Instructions en créole</h5>
+							<div class="card-body">
+								<p class="card-text">{{ test.instructionscr }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="text-center">
+					Vous avez sélectionné :
+					<strong>
+						{{ patient.name }}
+						{{ patient.lastname }}</strong>
+					pour passer cette épreuve.
+				</div>
+
+				<div class="text-center m-3">
+
+					<a class="btn btn-secondary" href="{{ path('app_evaluation_choix_patient',{'idTest' : idTest }) }}">revenir à la liste des patients</a>
+
+					<a class="btn btn-primary" href="{{ path('app_evaluation_run',{ 'idTest': idTest , 'idPatient': patient.id }) }}">Démarrer l'épreuve
+					</a>
+
+					<a class="btn btn-secondary" href="{{ path('test_index')}}">revenir à la liste des épreuves</a>
+
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+{% endblock %}

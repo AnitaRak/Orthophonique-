@@ -1,0 +1,39 @@
+{% block body %}
+
+
+	<div class="container main-container mt-5 text-center">
+		<div class="row">
+			<h2>Items activés pour cette épreuve</h2>
+			{% for item in test.items %}
+				{% if item.active%}
+					<div class="card h-100 col col-sm-4 col-12">
+						{% if item.illustrations.count() > 0%}
+							<img src="{{ asset('images/uploads/item/mini/500x500-' ~ item.illustrations[0].path ) }}" alt="{{ 'illustration500x500-' ~ item.illustrations[0].item.namefr}}" width="90%">
+						{% endif %}
+						<div class="card-body">
+							<h3 class="card-title">
+								<a href="{{ path('item_detail', {id : item.id})}}">{{item.namefr | capitalize}}</a>
+							</h3>
+							<ul class="list-group">
+								{% if item.namecr %}
+									<li class="list-group-item">Nom créole :
+										{{item.namecr | capitalize}}</li>
+								{% endif %}
+								{% if item.schoolgrade %}
+									<li class="list-group-item">Niveau :
+										{{item.schoolgrade.name}}</li>
+								{% endif %}
+							</ul>
+							{% if app.request.attributes.get('_route') == 'admin_test_edit' %}
+								<a href="{{ path('admin_item_edit', {idTest: testRoute, idItem : item.id})}}" class="m-3 mt-3 btn btn-outline-secondary">
+									Modifier cet item
+								</a>
+							{% endif %}
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+
+		</div>
+	</div>
+{% endblock %}

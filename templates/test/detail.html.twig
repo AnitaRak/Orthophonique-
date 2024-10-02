@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Détails du test
+	{{test.name}}
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container card m-5 mx-auto text-center">
+		{% include "test/_singletestheader.html.twig" %}
+
+		{% if app.request.attributes.get('_route') == 'admin_test_detail' %}
+			<a class="btn btn-outline-primary mt-3" href="{{ path('admin_test_edit', {id: test.id }) }}">Modifier ce test</a>
+			<a class="btn btn-secondary mt-3 mb-3" href="{{ path('admin_test_index')}}">Revenir à la liste des épreuves</a>
+		{% else %}
+			<a type="button" class=" btn btn-primary" href="{{ path('app_evaluation_choix_patient', {'idTest' : idTest}) }}">Lancer cette épreuve</a>
+			<a class="btn btn-secondary mt-3 mb-3" href="{{ path('test_index')}}">Revenir à la liste des épreuves</a>
+		{% endif %}
+
+		{% include "test/_singletestquestions.html.twig" %}
+		{% include "test/_singletestitemslist.html.twig" %}
+	</div>
+
+{% endblock %}

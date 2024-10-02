@@ -1,0 +1,95 @@
+{% extends "base.html.twig" %}
+{% block title %}
+	Liste des Utilisateurs
+{% endblock %}
+
+{% block body %}
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+			<div class="card m-3 justify-content-center align-items-center">
+				<main class="col-11 border border-light bg-white p-2">
+					<h1 class="text-center m-3 mb-4">
+						<a href="{{ path('admin_users_listeUsers') }}" style="color: black; text-decoration: none;" onmouseover="this.style.textDecoration='none'">Liste des Utilisateurs</a>
+					</h1>
+					<div class="row mb-3">
+						<div class="col-lg-3 text-center ">
+							<a href="{{ path('admin_users_listeUsers') }}" class="btn btn-primary">Utilisateur Valide</a>
+
+						</div>
+
+						<div class="col-lg-2 text-center mr-5 ">
+							<a href="{{ path('admin_users_list_invalid_inscription') }}" class="btn btn-primary">Utilisateur Invalide</a>
+						</div>
+
+						<div
+							class="col-lg-6 col-md-12 ">
+							<!-- Barre de recherche -->
+							{% include "components/_search_data.html.twig" with { form: form } only %}
+						</div>
+					</div>
+
+					{% if users|length > 0 %}
+						<table
+							class="table table-bordered table-striped text-center align-middle">
+							<!-- Entetes de mon tableaux -->
+							<thead>
+								<tr>
+									<th>Nom</th>
+									<th>Prénom</th>
+									<th>Mail</th>
+									<th>N° Adeli</th>
+									<th>Vérifié</th>
+									<th>Inscription Status</th>
+									<th>Date Inscription</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<!-- Corps de mon tableau -->
+							<tbody>
+								{% for user in users %}
+									<!-- J'affiche tous les utilisateurs sauf l'admin -->
+									{% if 'ROLE_ADMIN' not in user.getRoles() and user.getInscriptionStatus() == 'valide' %}
+										<tr>
+											<td>{{ user.getLastName }}</td>
+											<td>{{ user.getName }}</td>
+											<td>{{ user.getEmail }}</td>
+											<td>{{ user.getNoAdeli }}</td>
+											<td>
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="switch{{ user.id }}" {{ user.isVerified ? "checked" : "" }} disabled>
+													<label class="form-check-label" for="switch{{ user.id }}"></label>
+												</div>
+											</td>
+											<td>
+												<span class="badge bg-success">{{ user.getInscriptionStatus }}</span>
+											</td>
+											<td>{{ user.getCreateAt ? user.getCreateAt|date('d-m-Y ') : '' }}</td>
+											<td>
+												<form method="post" action="{{ path('admin_users_invalidate', {'userId': user.getId}) }}">
+													<button type="submit" class="btn btn-danger ">Invalider l'inscription</button>
+												</form>
+											</td>
+										</tr>
+									{% endif %}
+								{% endfor %}
+							</tbody>
+						</table>
+					{% else %}
+						<div class="text-center mt-4 mb-4">
+							<div class="alert alert-danger" role="alert">
+								<h3>Aucun utilisateur trouvé</h3>
+								<p>Aucun résultat ne correspond à votre recherche.</p>
+							</div>
+						</div>
+					{% endif %}
+				</main>
+			</div>
+		</div>
+		<!-- Pagination -->
+		<div class="navigation h-100 d-flex align-items-center justify-content-center">
+			<ul class="pagination justify-content-center">
+				{{ knp_pagination_render(users) }}
+			</ul>
+		</div>
+	</div>
+{% endblock %}

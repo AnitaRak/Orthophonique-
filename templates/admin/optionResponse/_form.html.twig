@@ -1,0 +1,29 @@
+{% block body %}
+	<form method="POST" enctype="multipart/form-data">
+		<div class="form-group">
+			{{ form_start(optionResponseForm) }}
+			<!-- We don't want this data to be modified here -->
+			{{ form_row(optionResponseForm.question, { 'attr': {'class': 'test-select', 'style': 'display: none'} }) }}
+			{{ form_row(optionResponseForm.templateValue, { 'attr': {'class': 'test-select', 'style': 'display: none'} }) }}
+			{{ form_row(optionResponseForm.name) }}
+
+			<!-- Illustrations -->
+			<div class="form-group">
+				{% if app.request.attributes.get('_route') == 'admin_optionResponse_edit' %}
+					{% for optionResponsesMedia in optionResponse.optionResponsesMedias %}
+						<div>
+							<img src="{{ asset('images/uploads/optionResponse/mini/500x500-' ~ optionResponsesMedia.path ) }}" alt="optionResponsesMedia" width="150">
+							<a href="{{ path('admin_optionResponse_delete_optionResponsesMedia', {id: optionResponsesMedia.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ optionResponsesMedia.id) }}">Supprimer</a>
+						</div>
+					{% endfor %}
+				{% endif %}
+				<span data-toggle="tooltip" data-placement="top" title="Toutes les images doivent être au format carré.">
+					{{ form_row(optionResponseForm.optionResponsesMedias) }}
+				</span>
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
+		{{ form_end(optionResponseForm) }}
+	</form>
+
+{% endblock %}

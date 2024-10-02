@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Béocler - Item
+	{{ item.namefr | capitalize }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<div class="row">
+			<div class="col-12">
+				<h1>Détail de l'item
+					{{ item.namefr }}</h1>
+			</div>
+			<div class="card col-12 col-md-5 mt-5">
+				<h3>Détails de l'item</h3>
+				<div class="card-body">
+					<label class="checkbox-inline">
+						<h3>Actif</h3>
+						<input onclick="" type="checkbox" checked data-toggle="{{ item.active }}">
+					</label>
+					<h3>Épreuve associée</h3>
+					<p>
+						<a href="{{ path('test_detail', {id : item.test.id}) }}">{{ item.test.name | capitalize }}</a>
+					</p>
+					<h3>Nom en français</h3>
+					<p>{{ item.namefr | capitalize }}</p>
+					{% if item.namecr %}
+						<h3>Nom en créole</h3>
+						<p>{{ item.namecr | capitalize }}</p>
+					{% endif %}
+					{% if item.schoolgrade %}
+						<h3>Niveau scolaire minimum</h3>
+						<p>{{ item.schoolgrade.name }}</p>
+					{% endif %}
+				</div>
+			</div>
+			{% if item.illustrations.count() > 0 %}
+				<div class="card col-12 col-md-7 mt-5">
+					<div id="carouselItemIllustrations" class="carousel slide" data-bs-ride="carousel">
+						<h3>Illustrations de l'item</h3>
+						<div class="carousel-indicators">
+							{% for iteration in 1..item.illustrations|length %}
+								<button type="button" data-bs-target="#carouselItemIllustrations" data-bs-slide-to="{{ iteration - 1 }}" {{ (loop.first) ? 'class="active" aria-current="true"' : '' }} aria-label="Slide {{ iteration }}"></button>
+							{% endfor %}
+						</div>
+						<div class="carousel-inner">
+							{% for illustration in item.illustrations %}
+								<div class="carousel-item {{ (loop.first) ? 'active center-active' : '' }}">
+									<img src="{{ asset('images/uploads/item/mini/500x500-' ~ illustration.path) }}" alt="{{ 'illustration500x500-' ~ illustration.item.namefr }}" width="350"/>
+								</div>
+							{% endfor %}
+						</div>
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselItemIllustrations" data-bs-slide="prev">
+							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Previous</span>
+						</button>
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselItemIllustrations" data-bs-slide="next">
+							<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							<span class="visually-hidden">Next</span>
+						</button>
+					</div>
+				</div>
+			{% endif %}
+			<div class="card col-12 mt-5">
+				<div class="card-body">
+					<h3 class="card-title">Questions associées à cet item</h3>
+					{% include "/item/_itemcardquestion.html.twig" %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

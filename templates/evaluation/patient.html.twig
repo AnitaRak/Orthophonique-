@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Evaluation
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+			<div class="card m-3">
+				<div>
+					<div>
+						{#Logo Du Site <img src="votre-logo.png" alt="Votre logo" width="80"> #}
+						<h1 class="text-Blue text-center m-3 mb-4">Quel patient voulez-vous examiner ?</h1>
+					</div>
+					{% if not patients is empty%}
+						<table class="table table-bordered table-striped table-hover text-center align-middle">
+							<thead>
+
+								<tr>
+									<th>Nom Prénom</th>
+									<th>Genre</th>
+									<th>Niveau Scolaire</th>
+									<th>Âge</th>
+									<th>date de naissance</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								{% for patient in patients %}
+									<tr onclick="window.location='{{ path('app_evaluation', { 'idTest': idTest , 'idPatient': patient.id }) }}'; " style="cursor:pointer;" class="patient-row">
+										<td>{{patient.name ~ " " ~ patient.lastname}}
+										</td>
+										<td>{{patient.gender}}</td>
+										<td>{{patient.schoolgrade.name}}</td>
+										{% set anneeCourante = "now"|date("Y") %}
+										<td>{{anneeCourante - patient.birthdate|date('Y')}}</td>
+										<td>{{patient.birthdate|date('d/m/Y')}}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% else %}
+						<h3>Vous n'avez pas encore créé de patients
+						</h3>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

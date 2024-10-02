@@ -1,0 +1,22 @@
+	
+	
+	<h1>Activation de votre compte</h1>
+    <p>Bonjour {{ user.name }},</p>
+
+    <p>Nous vous remercions de vous être inscrit sur le site Beocler.</p>
+
+    <p>Pour finaliser votre demande d'inscription, veuillez cliquer sur le lien ci-dessous :</p>
+
+    <p>
+        <a href="{{ absolute_url(path('verify_user',{token: token})) }}">{{ absolute_url(path('verify_user',{token: token})) }}</a>
+    </p>
+
+    <p>Ce lien d'activation expirera dans 3 heures. Assurez-vous d'activer votre compte dans ce délai.</p>
+
+    <p>Si vous n'avez pas tenté de créer un compte sur Beocler, veuillez ignorer ce message.</p>
+
+    <p>Merci et bienvenue sur Beocler !</p>
+
+    <p>Cordialement,</p>
+
+    <p>L'équipe Beocler</p>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Profile
+			{% endblock %}
+		</title>
+
+		<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/axentix@0.5.3/dist/css/axentix.min.css"> {% block stylesheets %}{% endblock %}
+
+		<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+		<link rel="stylesheet" href="{{ asset('css/_footer.css') }}">
+
+		<link rel="stylesheet" href="{{ asset('css/_nav.css') }}">
+		<link rel="stylesheet" href="{{ asset('css/main.css') }}">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
+
+		{{ encore_entry_link_tags('app') }}
+
+
+		<script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
+		<script src="{{ asset('js/jquery-3.7.1.min.js') }}"></script>
+
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+
+		{% endblock %}
+
+		<!-- responsive -->
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	</head>
+
+
+	<body class="layout with-sidenav">
+		<header>
+			{% block nav %}
+				{% include "_partials/_nav.html.twig" %}
+
+
+				<!--Conditions qui verifie que l'user est connecté est que sont compte n'a pas encore étais activé-->
+				{% if app.user and app.user.isVerified == false %}
+					<!--On va afficher une alerte-->
+					<div class="alert alert-warning alert-dismissible" role="alert">
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+						<div class="alert-message">
+							<strong>Votre compte n'est pas activé</strong>,<a href="{{ path('resend_verif') }}">renvoyer le lien d'activation</a>
+						</div>
+					</div>
+				{% endif %}
+
+
+			{% endblock %}
+			<!--On inclue le menu!-->
+		</header>
+		<div id="example-sidenav" class="sidenav large fixed white">
+			<div class="sidenav-header">
+				<button data-target="example-sidenav" class="sidenav-trigger">
+					<i class="fas fa-times"></i>
+				</button>
+
+			</div>
+			<a href="{{ path('users_index') }}" class="sidenav-link active">Mon profil</a>
+
+		</div>
+		<main>
+			<button data-target="example-sidenav" class="btn press amaranth dark-1 sidenav-trigger hide-md-up">
+				ouvrir navbar
+			</button>
+			{% block body %}{% endblock %}
+		</main>
+
+		{% include "_partials/_footer.html.twig" %}
+		<!--On inclue le footer !-->
+
+
+		<script src="https://cdn.jsdelivr.net/npm/axentix@0.5.3/dist/js/axentix.min.js"></script>
+
+		<script>
+			var sidenav = new Sidenav('#example-sidenav');
+		</script>
+		<script src="{{ asset('js/scripts.js') }}"></script>
+	</body>
+</html>

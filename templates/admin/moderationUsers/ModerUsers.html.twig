@@ -1,0 +1,94 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+	Modération des utilisateurs
+{% endblock %}
+
+{% block body %}
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+
+			<div class="card m-3 justify-content-center align-items-center">
+				<main class="col-11 border border-light bg-white p-2">
+
+					<h1 class="text-Blue text-center m-3 mb-4">Modérations  des Utilisateurs</h1>
+
+					{% set hasInvalidUsers = false %}
+					{% for user in users %}
+						{% if user.getInscriptionStatus() == 'invalide' %}
+							{% set hasInvalidUsers = true %}
+
+						{% endif %}
+					{% endfor %}
+
+					{% if hasInvalidUsers  %}
+						<table
+							class="table table-bordered table-striped text-center align-middle">
+							<!--Entetes de mon tableaux-->
+							<thead>
+
+								<tr>
+
+									<th>Nom</th>
+									<th>Prénom</th>
+									<th>Mail</th>
+									<th>N° Adeli</th>
+									<th>Date Inscription</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<!--Corps de mon tableau-->
+							<tbody>
+								<!--Je vais aller recuperer tout les utilisateur qui on été récuperer dans le tableau de la variable $users envoyé depuis le UserController.php-->
+								{% for user in users %}
+
+									<!--J'affiche tous les utilisateurs sauf l'admin et les utilisateurs qui ont un status d'inscriptions invalide -->
+									{% if 'ROLE_ADMIN' not in user.getRoles() %}
+										<tr>
+
+											<td>{{ user.getLastName }}</td>
+											<td>{{ user.getName }}</td>
+											<td>{{ user.getEmail }}</td>
+											<td>{{ user.getNoAdeli}}</td>
+											<td>{{ user.getCreateAt ? user.getCreateAt|date('d-m-Y ') : '' }}</td>
+											<td>
+												<form method="post" action="{{ path('admin_users_validInscrips', {'userId': user.getId}) }}">
+													<button type="submit" class="btn btn-success w-100 mb-2">Valider l'inscription</button>
+												</form>
+
+												<form method="post" action="{{ path('admin_users_invalidate', {'userId': user.getId}) }}">
+													<button type="submit" class="btn btn-danger w-100">Invalider l'inscription</button>
+												</form>
+											</td>
+
+										</tr>
+									{% endif %}
+
+								{% endfor %}
+							</tbody>
+
+
+						</table>
+					{% else %}
+						<div class="text-center mt-4 mb-4">
+							<div class="alert alert-info" role="alert">
+								<h3>Aucune Modération à effectuer</h3>
+								<p>Il n’y a actuellement aucun utilisateur en attente de modération.</p>
+								<p>Aucune nouvelle inscription n’a été enregistrée.</p>
+								<p>Si de nouveaux utilisateurs se présentent, ils seront affichés ici. En attendant, nous vous invitons à profiter de notre plateforme.</p>
+							</div>
+						</div>
+
+					{% endif %}
+
+				</main>
+			</div>
+		</div>
+		<!--Pagination-->
+		<div class="navigation h-100 d-flex align-items-center justify-content-center">
+			<ul class="pagination justify-content-center">
+				{{ knp_pagination_render(users ) }}
+			</ul>
+		</div>
+	</div>
+{% endblock %}

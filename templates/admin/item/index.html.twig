@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Liste des items
+{% endblock %}
+{% block body %}
+    <div class="container main-container">
+		<div class="row justify-content-center align-items-center" >
+        	<div class="card m-3">
+					<h1 class="text-Blue text-center m-3 mb-4">Liste des items</h1>
+					<form action="{{ path('admin_item_add')}}" class="d-flex justify-content-center">
+						<button type="submit" class="m-3 mt-0 btn btn-primary">
+							Créer un nouvel item
+						</button>
+					</form>
+				
+				<table class="table table-bordered table-striped text-center align-middle">
+					<thead>
+						<tr>
+							<th>Image</th>
+							<th>Nom</th>
+							<th>Nom créole</th>
+							<th>Statut</th>
+							<th>Épreuve associée</th>
+							<th>Niveau</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in items %}
+							<tr>
+								<td>
+									{% if item.illustrations.count() > 0 %}
+										<img src="{{ asset('images/uploads/item/mini/500x500-' ~ item.illustrations[0].path ) }}" alt="{{ 'illustration500x500-' ~ item.illustrations[0].item.namefr}}" width="150">
+									{% endif %}
+								</td>
+								<td>{{ item.namefr | capitalize }}</td>
+								<td>
+									{% if item.namecr %}
+										{{ item.namecr | capitalize }}
+									{% endif %}
+								</td>
+								<td>
+									<label class="checkbox-inline">
+										Actif
+										<input onclick="" type="checkbox" checked data-toggle="{{ item.active }}">
+									</label>
+								</td>
+								<td>
+									<a href="{{ path('test_detail', {id : item.test.id}) }}">{{ item.test.name | capitalize }}</a>
+								</td>
+								<td>
+									{% if item.schoolgrade %}
+										{{ item.schoolgrade.name }}
+									{% endif %}
+								</td>
+								<td>
+									<form action="{{ path('item_detail', {id: item.id})}}">
+										<button type="submit" class="btn btn-info w-100 mb-2">
+											Détails
+										</button>
+									</form>
+									<form action="{{ path('admin_item_edit', {idTest:item.test.id, idItem: item.id})}}">
+										<button type="submit" class="btn btn-warning w-100">
+											Modifier
+										</button>
+									</form>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div 
+{% endblock %}

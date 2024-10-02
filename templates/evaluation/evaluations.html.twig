@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Liste des évaluations
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+			<div class="card m-3">
+				<div>
+					{# Logo Du Site <img src="votre-logo.png" alt="Votre logo" width="80"> #}
+					<h1 class="text-center m-3 mb-4">
+						<a href="{{ path('app_evaluation_evaluations') }}" style="color: black; text-decoration: none;" onmouseover="this.style.textDecoration='none'">Liste des évaluations</a>
+					</h1>
+					<div
+						class="col-12 d-flex justify-content-end ">
+						<!-- Barre de recherche -->
+						{% include "components/_search_data.html.twig" with { form: form } only %}
+					</div>
+				</div>
+				<div class="table-container">
+					{% if evaluations|length > 0 %}
+						<table class="table table-bordered table-striped text-center align-middle">
+							<thead>
+								<tr>
+									<th>Nom Prénom du patient</th>
+									<th>Nom de l'épreuve</th>
+									<th>Statut</th>
+									<th>Score</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for evaluation in evaluations %}
+									<tr onclick="window.location='{{ path('app_evaluation_consulter', {'idEval': evaluation.id }) }}'; " style="cursor:pointer;" class="eval-row">
+										<td>{{ evaluation.patient.name ~" "~ evaluation.patient.lastname }}</td>
+										<td>{{ evaluation.test.name }}</td>
+										{% if evaluation.status == "Done" %}
+											<td>Terminé</td>
+										{% else %}
+											<td>En cours</td>
+										{% endif %}
+										<td>{{ evaluation.score }}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% endif %}
+					{% if form is defined and form.vars.valid %}
+						{% if evaluations|length == 0 %}
+							<div class="text-center mt-4 mb-4">
+								<div class="alert alert-info" role="alert">
+									<h3>Aucune évaluation trouvée</h3>
+									<p>Aucun résultat correspond à votre recherche.</p>
+								</div>
+							</div>
+						{% endif %}
+					{% else %}
+						<div class="text-center mt-4 mb-4">
+							<div class="alert alert-info" role="alert">
+								<h3>Aucune évaluation n'a été effectuée</h3>
+								<p>Vous n'avez pas encore réalisé d'évaluation avec un patient.</p>
+								<p>Nous vous encourageons à lancer une évaluation avec un patient dès que possible.</p>
+							</div>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<!-- Pagination -->
+		<div class="navigation h-100 d-flex align-items-center justify-content-center">
+			<ul class="pagination justify-content-center">
+				{{ knp_pagination_render(evaluations ) }}
+			</ul>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% block body %}
+	<form method="POST" id="question-form">
+		<div class="form-group">
+			{{ form_start(questionForm) }}
+			<div class="card">
+				<button type="submit" id="validationForm" class="btn btn-primary">
+					{{ button_label|default('Enregistrer les modifications') }}
+				</button>
+				<div class="card-body">
+					<p class="card-text">
+						<strong>Épreuve:</strong>
+						{{ questionForm.item.vars.data.test.name }}
+					</p>
+					<p class="card-text">
+						<strong>Item:</strong>
+						{{ questionForm.item.vars.data.nameFr }}
+					</p>
+					<p class="card-text">
+						<strong>Question:</strong>
+						{{ questionForm.templateQuestion.vars.data.instructionsFr }}
+					</p>
+					{{ form_row(questionForm.active, {
+                        'label': 'Activé',
+                        'attr': {
+                            'readonly': 'readonly',
+                            'data-toggle': 'tooltip',
+                            'data-placement': 'top',
+                            'title': 'Désactiver pour que la question ne soit plus posée lors du passage des épreuves.'
+                        }
+                    }) }}
+					{{ form_row(questionForm.item, {'attr': {'style': 'display: none'}}) }}
+					{{ form_row(questionForm.templateQuestion, {'attr': {'style': 'display: none'}}) }}
+				</div>
+			</div>
+
+			{% if questionForm.templateQuestion.vars.data.ismcq %}
+				<div id="optionResponsesList" class="optionResponses" data-index="{{ questionForm.optionResponses|length > 0 ? questionForm.optionResponses|last.vars.name + 1 : 0 }}" data-prototype="{{ form_widget(questionForm.optionResponses.vars.prototype)|e('html_attr') }}">
+					<div class="form-group">
+						<h3>Réponses par défaut</h3>
+						<div id="defaultTemplateValues">
+							{% for tvalue in questionForm.templateQuestion.vars.data.templateValues %}
+								<div class="card mb-3 template-question-box" data-question-index="{{ loop.index }}">
+									<div class="card-body">
+										<h4 class="card-title">Réponse n°{{ loop.index }}</h4>
+										<table>
+											<thead>
+												<tr>
+													<th class="px-2">Abréviation</th>
+													<th class="px-2">Valeur</th>
+													<th class="px-2">Score</th>
+													<th class="px-2">Action</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td class="px-2">{{ tvalue.name }}</td>
+													<td class="px-2">{{ tvalue.completeName }}</td>
+													<td class="px-2">{{ tvalue.score}}</td>
+													<td class="px-2">
+														<button type="button" class="btn btn-outline-primary add_option_response" data-collection-holder-class="optionResponses" data-index={{ loop.index }} data-item-id={{ questionForm.item.vars.data.id }} data-tvalue-id={{ tvalue.id }} data-question-id={{ questionForm.vars.value.id}}>
+															Ajouter une option de réponse personnalisée pour cet item
+														</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+						<h3>Réponses personnalisées pour l'item</h3>
+						{% if questionForm.optionResponses.count() == 0 %}
+							<p>Pas d'options de réponse personnalisées pour cet item</p>
+						{% else %}
+							{% for optionResponseForm in questionForm.optionResponses %}
+								<div class="card mb-3 template-question-box" data-question-index="{{ loop.index }}">
+									<div class="card-body">
+										<h4 class="card-title">Réponse n°{{ loop.index }}</h4>
+										{{ form_row(optionResponseForm.name, {'label': 'Nom'}) }}
+										<div style="display : none;">
+											{{ form_row(optionResponseForm.question, {'attr': {'style': 'display: none'}}) }}
+											{{ form_row(optionResponseForm.optionResponsesMedias) }}</div>
+										<table>
+											<tr>
+												<td>
+													<strong>{{ form_row(optionResponseForm.templateValue, {'attr': {'style': 'display: none'}, 'block_prefixes': ['hidden']}) }}</strong>
+												</td>
+												<td>
+													<p class="mb-4 px-5">{{ optionResponseForm.vars.data.templateValue.name }}</p>
+												</td>
+												<td>
+													<p class="mb-4 px-5">
+														Score :
+														{{ optionResponseForm.vars.data.templateValue.score }}
+													</p>
+												</td>
+											</tr>
+										</table>
+										<div>
+
+
+											<a class="btn btn-outline-primary" href="{{ path('admin_optionResponse_edit', {id: optionResponseForm.vars.data.id} ) }}">Ajouter / Modifier les images</a>
+											{% if app.request.attributes.get('_route') == 'admin_question_edit' and questionForm.vars.value.id is defined %}
+												{% for optionResponsesMedia in optionResponseForm.vars.value.optionResponsesMedias %}
+													<div>
+														<img src="{{ asset('images/uploads/optionResponse/mini/500x500-' ~ optionResponsesMedia.path ) }}" alt="optionResponsesMedia" width="150">
+														<a class="text-danger" href="{{ path('admin_optionResponse_delete_optionResponsesMedia', {id: optionResponsesMedia.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ optionResponsesMedia.id) }}">Supprimer</a>
+													</div>
+												{% endfor %}
+												<a class="btn btn-outline-danger" href="{{ path('admin_question_delete_optionResponse', {id: optionResponseForm.vars.data.id} ) }}" data-delete data-token="{{ csrf_token('delete' ~ optionResponseForm.vars.data.id) }}">
+													Supprimer cette option
+												</a>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="buttons-box">
+			{{ form_end(questionForm) }}
+			<a href="{{ path('admin_item_edit', {'id': questionForm.item.vars.data.id}) }}" class="m-3 mt-0 btn btn-outline-primary">
+				Retour vers l'item
+			</a>
+			<a href="{{ path('admin_test_index') }}" class="m-3 mt-0 btn btn-outline-secondary">
+				Revenir à la liste des épreuves
+			</a>
+			{% if app.request.attributes.get('_route') == 'admin_question_edit' and questionForm.vars.value.id is defined %}
+				<a href="{{ path('admin_question_delete', {id: questionForm.vars.value.id} ) }}" class=" m-3 mt-0 btn btn btn-outline-danger" data-delete data-token="{{ csrf_token('delete' ~ questionForm.vars.value.id) }}">
+					Supprimer cette question
+				</a>
+			{% endif %}
+		</div>
+	</form>
+{% endblock %}

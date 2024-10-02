@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Béocler - Modifier une option de réponse
+{% endblock %}
+{% block javascripts %}
+	 <script src="{{ asset('js/deletechild.js')}}"></script>
+{% endblock %}
+{% block body %}
+	<main class="container main-container">
+		<section class="row">
+			<h1>Modifier l'option
+				{{optionResponse.name}}</h1>
+			{% include "admin/optionResponse/_form.html.twig" with {'button_label': 'Enregistrer'} %}
+			<a href="{{ path('admin_item_edit', {id: optionResponse.question.item.id }) }}" class="m-3 mt-0 btn btn-outline-secondary">
+				Voir l'item
+			</a>
+			<a href="{{ path('admin_item_index') }}" class="m-3 mt-0 btn btn-outline-secondary">
+				Revenir à la liste des items
+			</a>
+		</section>
+	</main>
+{% endblock %}

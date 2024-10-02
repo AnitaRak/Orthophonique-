@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Béocler - Modifier un item
+{% endblock %}
+{% block javascripts %}
+	 <script src="{{ asset('js/deletechild.js')}}"></script>
+{% endblock %}
+{% block body %}
+    <div class="container main-container card col-6 m-4 mx-auto">
+		<div class="justify-content-center align-items-center" >
+			<div  class="text-Blue text-center m-3 mb-4">
+				<h1>Modifier l'item
+					{{item.namefr}}</h1>
+				{#affichage de l'indice de l'item (implementer le changement d'ordre plus tard)#}
+				<span>{{item.sequence}}</span>
+				{% include "admin/item/_form.html.twig" with {'button_label': 'Enregistrer'} %}
+				<a href="{{ path('admin_test_edit', {id: item.test.id }) }}" class="m-3 mt-0 btn btn-outline-secondary">
+					Voir l'épreuve
+				</a>
+			</div>
+		</div>
+	</div 
+{% endblock %}

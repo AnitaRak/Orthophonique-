@@ -1,0 +1,33 @@
+{% block body %}
+	<h3 class="card-title">{{item.namefr | capitalize}}</h3>
+	<ul class="list-group list-group-flush">
+		{% if item.namecr %}
+			<li class="list-group-item">
+				Nom créole :
+				{{item.namecr | capitalize}}
+			</li>
+		{% endif %}
+		<li class="list-group-item">
+			<label class="checkbox-inline">
+				Actif
+				<input onclick="" type="checkbox" checked data-toggle={{ item.active}}></label>
+		</li>
+		<li class="list-group-item">
+			Épreuve associée :
+			<p>
+				<a href="{{ path('test_detail', {id : item.test.id})}}">{{ item.test.name | capitalize}}</a>
+			</p>
+		</li>
+		{% if item.schoolgrade %}
+			<li class="list-group-item">
+				Niveau :
+				<p>{{ item.schoolgrade.name}}</p>
+			</li>
+		{% endif %}
+	</ul>
+	<form action="{{ path('item_detail', {id: item.id})}}">
+		<button type="submit" class="m-3 mt-0 btn btn-secondary">
+			Détails
+		</button>
+	</form>
+{% endblock %}

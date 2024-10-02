@@ -1,0 +1,20 @@
+/* Style footer */
+.footer-links {
+    list-style: none; /* Supprime les puces de la liste */
+}
+
+.footer-links a {
+    list-style: none; /* Supprime les puces */
+    color: white; /* Change la couleur des liens en blanc */
+    text-decoration: none; /* Supprime les soulignements par défaut */
+}
+
+.footer-links a:hover {
+    text-decoration: underline; /* Ajoute un soulignement au survol */
+}
+
+/* Utilisation de rgba pour obtenir une couleur similaire à $orange-400 */
+.bg-orange {
+    background: rgba(255, 170, 0, 0.5); /* Utilisation de rgba avec les valeurs RVB et une opacité de 0.5 (50%) */
+    color: black; /* Couleur du texte en noir */
+  }

@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - info patient{% endblock %}
+
+{% block body %}
+    <div class="container main-container">
+
+        <div class="card m-3">
+
+        <h1 class="text-Blue text-center m-3 mb-4">Informations patient</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                    <div class="col-md-6 mx-auto m-3"> {# moitié de la moité d'une div et centrage du contenue #}
+                        <span >Nom Prénom : {{ patient.name ~ " " ~ patient.lastname }} </span> <br>
+                        <span>Niveau scolaire: {{ patient.schoolgrade.name }} </span><br>
+                        <span>Genre : {{ patient.gender }}</span><br>
+                        {% set anneeCourante = "now"|date("Y") %}
+                        <span>Age : {{ anneeCourante - patient.birthdate|date('Y') }} ans </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center ">
+                    <div class="col m-3 text-center">
+
+                        <span>Statut :
+                            {% if patient.active %}
+                                Actif
+                            {% else %}
+                                Inactif
+                            {% endif %}
+                        </span><br>
+                        <span>Suivi par :
+                            {% for user in patient.users %}
+                                {{ user.name }}
+                                {{ user.lastname }}
+                            {% endfor %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            
+            
+
+            <h2 class="text-Blue text-center mb-4 " >Liste des épreuves passées par le patient</h2>
+
+            <table class="table table-bordered table-striped text-center align-middle" >
+                    <thead>
+
+                        <tr>
+                            <th>Nom</th>
+                            <th>type</th>
+                            <th>date</th>
+                            <th>statut</th>
+                            <th>consulter les réponses</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for evaluation in patient.evaluations %}
+                        <tr>
+                            <td>{{evaluation.test.name}}</td>
+                            <td>{{evaluation.test.typetest.name}}</td>
+                            <td>{{evaluation.createdat|date('d/m/Y')}}</td>
+                            <td>{{evaluation.status}}</td>
+                            <td><a href="">consulter les réponses</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

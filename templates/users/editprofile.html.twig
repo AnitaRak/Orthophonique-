@@ -1,0 +1,25 @@
+{% extends 'users.html.twig' %}
+
+{% block title %}Modification du profil de
+	{{ app.user.getLastName() }}
+	{{ app.user.getName }}
+{% endblock %}
+
+{% block body %}
+	<div class="grix xs4 container">
+
+		<div class="col-xs4">
+			<h1>Modification du profil de
+				{{ app.user.getLastName() }}
+				{{ app.user.getName }}
+			</h1>
+
+			{{form_start(form)}}
+
+			{{form_end(form)}}
+
+
+		</div>
+	</div>
+
+{% endblock %}

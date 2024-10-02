@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - réponses d'une evaluation
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+			<div class="card m-3">
+				<div>
+					<div>
+						{#Logo Du Site <img src="votre-logo.png" alt="Votre logo" width="80"> #}
+						<h1 class="text-Blue text-center m-3 mb-4">réponses de l'{{evaluation.test.name}}</h1>
+                        <h4>Patient : {{evaluation.patient.name ~ " " ~ evaluation.patient.lastname}}</h4>
+						<br>
+					</div>
+					<div class="container">
+						<div class="row">
+						{% for item in evaluation.test.items %}
+							{% set responseCourant = null %}
+							{% for response in item.responses %}
+								{% if response.patient.id == evaluation.patient.id and evaluation.id == response.evaluation.id %}
+									{% set responseCourant = response %}
+								{% endif %}
+							{% endfor %}
+							 
+								
+								
+								
+
+								{% if responseCourant == null %}
+									<div class="card h-100 col-4">
+										<div class="card-body">
+											<h3 class="card-title">{{item.namefr | capitalize}}</h3>
+											<ul class="list-group list-group-flush">
+												<li class="list-group-item">pas de réponse pour cette item</span>
+											</ul>
+										</div>
+									</div>
+
+								{% else %}
+									<div class="card h-100 col-4 d-flex">
+										<div class="card-body">
+											<h3>{{ item.namefr }}</h3>
+											<ul class="list-group list-group-flush">
+											{% for question in item.questions %}
+													
+												{% set valName = "" %}
+												{% if question.templateQuestion.requiresText %}
+													<li class="list-group-item">{{ responseCourant.text }}</li>
+												{% endif %}
+												
+												{% for score in responseCourant.scores %}
+													{% if score.question.id == question.id %}
+														{% set valName = score.valuename %}
+													{% endif %}
+												{% endfor %}
+										
+												<li class="list-group-item">{{ valName }}</li>
+									
+
+											{% endfor %}
+											</ul>
+										</div>
+									</div>
+								{% endif %}
+							
+						{% endfor %}
+						</div>
+						<a class="m-3 mt-0 btn btn-secondary" href="{{ path('app_evaluation_run',{ 'idTest': evaluation.test.id , 'idPatient': evaluation.patient.id }) }}" id="">reprendre l'épreuve</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

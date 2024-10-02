@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}404 Page not found{% endblock %}
+
+{% block body %}	
+    {% block nav %}{% endblock %} {# Remove Nav Bar #}
+
+    <div class="main-container d-flex align-items-center justify-content-center min-vh-100">
+        <div class="text-center">
+            <h1 class="display-4">404 Page Non Trouvé</h1>
+            <p class="lead">La page que vous cherchez est introuvable. Merci de vérifier l'URL ou de revenir à la page d'accueil.</p>
+            <a href="/" class="btn btn-primary">Aller à la page d'accueil</a>
+            {# English version
+            <h1 class="display-4">404 Not Found</h1>
+            <p class="lead">The page you are looking for is not found. Please check the URL or go back to the homepage.</p>
+            <a href="/" class="btn btn-primary">Go to Home Page</a>
+            #}
+        </div>
+    </div>
+    
+    {% block footer %}{% endblock %}{# Remove footer #}
+    
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Épreuves de
+	{{testType.name}}
+{% endblock %}
+
+{% block body %}
+	<main class="container">
+		<section class="row">
+			<div class="col-12">
+				<h1>Liste des épreuves des
+					{{testType.name}}</h1>
+				<p>{{testCount}}
+					épreuves de ce type ont été trouvées</p>
+			</div>
+		</section>
+		{% for test in tests %}
+			<div class="card h-100" style="width: 10rem;">
+				<div class="card-body">
+					<h2 class="card-title">
+						<a href="{{ path('test_detail', {id : test.id})}}">{{test.name}}</a>
+					</h2>
+					<ul class="list-group list-group-flush">
+						{% for item in test.items | first() %}
+							<li class="list-group-item">
+								<p>{{item.namefr}}</p>
+								<p></p>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		{% endfor %}
+	</main>
+{% endblock %}

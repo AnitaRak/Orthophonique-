@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Béocler - Liste des patients
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+
+			<div class="card m-3">
+				<h1 class="text-center m-3 mb-4">
+					<a href="{{ path('app_patient') }}" style="color: black; text-decoration: none;" onmouseover="this.style.textDecoration='none'">Liste des patients</a>
+				</h1>
+
+				<div class="row">
+					<div class="text-center col-lg-6 col-md-12 d-flex flex-column justify-content-center align-items-center mb-3">
+						<a href="{{ path('app_patient_new') }}" class="btn btn-primary btn-primary w-90">Ajouter un patient</a>
+					</div>
+
+					<div
+						class="col-lg-6 col-md-12 d-flex flex-column justify-content-center align-items-center">
+						<!-- Barre de recherche -->
+						{% include "components/_search_data.html.twig" with { form: form } only %}
+					</div>
+				</div>
+
+				{% if not new %}
+					{% if patients|length > 0 %}
+						<table class="table table-bordered table-striped text-center align-middle">
+							<thead>
+								<tr>
+									<th>Nom Prénom</th>
+									<th>Genre</th>
+									<th>Niveau Scolaire</th>
+									<th>Âge</th>
+									<th>Date de naissance</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for patient in patients %}
+									<tr>
+										<td>{{ patient.name ~ " " ~ patient.lastname }}</td>
+										<td>{{ patient.gender }}</td>
+										<td>{{ patient.schoolgrade.name }}</td>
+										{% set anneeCourante = "now"|date("Y") %}
+										<td>{{ anneeCourante - patient.birthdate|date('Y') }}</td>
+										<td>{{ patient.birthdate|date('d/m/Y') }}</td>
+										<td>
+											<div class="btn-group">
+												<button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													Actions
+												</button>
+												<div class="dropdown-menu">
+													<a class="dropdown-item" href="{{ path('app_patient_read', {'id': patient.id }) }}">Consulter</a>
+													<div class="dropdown-divider"></div>
+													<a class="dropdown-item" href="{{ path('app_patient_edit', {'id': patient.id }) }}">Modifier</a>
+													<div class="dropdown-divider"></div>
+													<form method="post" action="{{ path('app_patient_delete', {'id': patient.id}) }}" onsubmit="return confirm('Êtes-vous sûr de supprimer ce document ?');">
+														<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ patient.id) }}">
+														<button class="dropdown-item" type="submit">Supprimer</button>
+													</form>
+												</div>
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					{% else %}
+						<div class="text-center mt-4 mb-4">
+							<div class="alert alert-info" role="alert">
+								<h3>Aucun patient trouvé</h3>
+								<p>Aucun patient ne correspond à votre recherche.</p>
+							</div>
+						</div>
+					{% endif %}
+				{% else %}
+					<div class="text-center mt-4 mb-4">
+						<div class="alert alert-info" role="alert">
+							<h3>Aucun patient n'a été créé</h3>
+							<p>Vous n'avez pas encore créé de profil patient.</p>
+							<p>Nous vous invitons à ajouter vos patients pour commencer à travailler avec eux.</p>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Pagination -->
+		<div class="navigation h-100 d-flex align-items-center justify-content-center">
+			<ul class="pagination justify-content-center">
+				{{ knp_pagination_render(patients) }}
+			</ul>
+		</div>
+	</div>
+{% endblock %}

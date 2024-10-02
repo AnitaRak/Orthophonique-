@@ -1,0 +1,78 @@
+{% block body %}
+
+	{% if item.questions.count() > 0 %}
+		<p>
+			<strong>{{item.questions.count()}}
+				questions sont posées pour cet item.</strong>
+		</p>
+		{% for question in item.questions %}
+			<h4>{{question.templateQuestion.instructionsFr | capitalize}}</h4>
+			{% if question.templateQuestion.instructionsCr %}
+				<h4>{{question.templateQuestion.instructionsCr | capitalize}}</h4>
+			{% endif %}
+			{% if question.templateQuestion.isMCQ %}
+				<table class="table">
+					{% if question.optionResponses.count() > 1 %}
+						<thead>
+							<tr>
+								<th scope="col">Nom de l'option</th>
+								<th scope="col">Valeur</th>
+								<th scope="col">Détail de la valeur</th>
+								<th scope="col">Score associé</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for option in question.optionResponses %}
+								<tr>
+									<th>{{option.name | capitalize}}</th>
+									<th>{{option.templateValue.name | capitalize}}</th>
+									<th>{{option.templateValue.completeName | capitalize}}</th>
+									<th>{{option.templateValue.score | capitalize}}</th>
+								</tr>
+							{% endfor %}
+						{% endif %}
+						{% if question.optionResponses.count() < 1 %}
+							<thead>
+								<tr>
+									<th scope="col">Valeur</th>
+									<th scope="col">Détail de la valeur</th>
+									<th scope="col">Score associé</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for option in question.templateQuestion.templateValues %}
+									<tr>
+										<th>{{option.name | capitalize}}</th>
+										<th>{{option.completeName | capitalize}}</th>
+										<th>{{option.score | capitalize}}</th>
+									</tr>
+								{% endfor %}
+							{% endif %}
+						</tbody>
+					</table>
+					{% if app.request.attributes.get('_route') == 'admin_item_edit' %}
+						<a href="{{ path('admin_question_edit', {'id': question.id}) }}" class="m-3 mt-0 btn btn-outline-primary">
+							Personnaliser les options de réponse pour cette question et cet item
+						</a>
+					{% endif %}
+				{% endif %}
+				{% if question.templateQuestion.requiresText %}
+					<p>Texte à saisir</p>
+				{% endif %}
+				{% if question.templateQuestion.requiresAudio %}
+					<p>Un fichier audio doit être enregistré</p>
+				{% endif %}
+				{% if question.templateQuestion.requiresAudio %}
+					<p>Un fichier audio doit être enregistré</p>
+				{% endif %}
+				{% if question.templateQuestion.isCustomScore %}
+					<p>Un score doit être manuellement saisi</p>
+				{% endif %}
+				{% if question.templateQuestion.isIncludedInTotalScore %}
+					<p>Ce score est pris en compte dans le calcul du score total de l'épreuve.</p>
+				{% else %}
+					<p>Ce score n'est pas pris en compte dans le calcul du score total de l'épreuve.</p>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+	{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Béocler - Liste des épreuves
+{% endblock %}
+
+{% block body %}
+
+	<div class="container main-container">
+		<div class="row justify-content-center align-items-center">
+			<div class="m-3 card w-100">
+
+				<h1 class="text-center m-3 mb-4">
+					<a href="{{ path('admin_test_index') }}" style="color: black; text-decoration: none;" onmouseover="this.style.textDecoration='none'">Liste des épreuves</a>
+				</h1>
+
+
+				<div class="row mb-3">
+					<div
+						class="col-lg-6 col-md-12 d-flex flex-column align-items-center mb-3">
+						<!-- Bouton pour créer une nouvelle épreuve -->
+						<form action="{{ path('admin_test_add') }}">
+							<button type="submit" class="btn btn-primary w-100">
+								Créer une nouvelle épreuve
+							</button>
+						</form>
+					</div>
+					<div
+						class="col-lg-6 col-md-12">
+						<!-- Barre de recherche -->
+						{% include "components/_search_data.html.twig" with { form: form } only %}
+					</div>
+				</div>
+
+				{% if posts|length > 0 %}
+					<table class="table table-bordered table-striped text-center align-middle">
+						<thead>
+							<tr>
+								<th>Nom</th>
+								<th>Type d'épreuve</th>
+								<th>Nombre d'items</th>
+								<th>Statut</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for test in posts %}
+								<tr>
+									<td>{{ test.name | capitalize }}</td>
+									<td>{{ test.typeTest.name | capitalize }}</td>
+									<td>{{ test.items.count() }}</td>
+									<td>
+										{% if test.active %}
+											Épreuve disponible pour les professionnels
+										{% else %}
+											Épreuve invisible pour les professionnels
+										{% endif %}
+									</td>
+									<td>
+										<form action="{{ path('admin_test_detail', { id: test.id }) }}" method="GET">
+											<button type="submit" class="btn btn-secondary w-100 mb-2">
+												Détails
+											</button>
+										</form>
+										<form action="{{ path('admin_test_edit', {id:test.id}) }}">
+											<button type="submit" class="btn btn-primary w-100">
+												Modifier
+											</button>
+										</form>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					<div class="text-center mt-4 mb-4">
+						<div class="alert alert-danger" role="alert">
+							<h3>Aucune épreuve trouvé</h3>
+							<p>Aucune épreuve ne correspond à votre recherche.</p>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+		<div class="navigation h-100 d-flex align-items-center justify-content-center">
+			<ul class="pagination justify-content-center">
+				{{ knp_pagination_render(posts) }}
+			</ul>
+		</div>
+	</div>
+
+
+{% endblock %}

@@ -1,0 +1,127 @@
+<nav class="navbar navbar-expand-lg bg-info">
+
+
+	<div
+		class="container">
+
+		<!-- Loge retour racine -->
+		<a class="navbar-brand" href="/">
+			<img src="{{ asset('images/accueil.png') }}" alt="Accueil" width="30" height="30" class="img-fluid">
+		</a>
+
+		<!--Variable -->
+		{% set isAdmin = is_granted('ROLE_ADMIN') %}
+		{% set isOtherRole = is_granted('ROLE_USER') or is_granted('ROLE_PATIENT_ADMIN') %}
+
+		<!-- Menu Liste des épreuves // Mes évualtions // Gestion des patients  -->
+		<!--Si l'utilisateur est connecté j'affiche les element de la navigation selon son role-->
+			{% if app.user %}
+				<ul
+				class="navbar-nav"> <!--Si il est connecté en tant qu'admin -->
+				{% if isAdmin  %}
+
+					<!-- Liste des possibilité pour Gestion patients -->
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="menu2Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							Gestion des utilisateurs
+						</a>
+						<ul class="dropdown-menu text-center" aria-labelledby="menu2Dropdown">
+							<li>
+								<a class="dropdown-item" href="{{path('admin_users_listeUsers')}}">Listes des utilisateurs</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{{path('admin_users_ModerUsers')}}">Modération des nouveaux utilisateurs</a>
+							</li>
+						</ul>
+						<!-- Element qui rajoute de l'espace entre le menu Gestion des user et le menu gestion des epreuves  -->
+					</li>
+					<li class="nav-item">
+						<div style="width: 250px;"></div>
+					</li>
+
+					<li class="nav-item">
+						<a class="nav-link" href="{{('/admin/test')}}">Gestion des épreuves
+						</a>
+					</li>
+
+					<!-- Element qui rajoute de l'espace entre le menu Gestion des epreuve et le menu Mon compte -->
+					<li class="nav-item">
+						<div style="width: 250px;"></div>
+					</li>
+
+				{% endif %}
+
+				<!--Si l'utilisateur connecté n'est pas un admin mais un professionel j'affiche ces menu-->
+				{% if not isAdmin and isOtherRole %}
+
+					{% if app.user and app.user.getIsVerified() and app.user.getInscriptionStatus() == 'valide' %}
+
+
+						<!-- Lien direct pour Liste des épreuves -->
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('test_index')}}">Liste des épreuves
+							</a>
+						</li>
+
+						<!-- Lien direct pour Liste des épreuves -->
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('app_evaluation_evaluations') }}">Mes évaluations</a>
+						</li>
+
+						<!-- Liste des possibilité pour Gestion patients -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="menu2Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								Gestions des patients
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="menu2Dropdown">
+								<li>
+									<a class="dropdown-item" href="/patient/new">Créer un profil patients</a>
+								</li>
+								<li>
+									<a class="dropdown-item" href="/patient">Liste des patients</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+
+				{% endif %}
+			{% endif %}
+		{% endif %}
+		<!-- Logo Utilisateur // Connexion // Incription  -->
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<img src="{{ asset('images/profil.png') }}" alt="Se connecter" width="30" height="30" class="img-fluid">
+				</a>
+
+				<ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="navbarDropdown">
+					{% if app.user %}
+						{% if app.user.getIsVerified() and app.user.getInscriptionStatus() == 'valide' %}
+							<li>
+								<a class="dropdown-item" href="{{ path('users_index') }}">Mon compte</a>
+							</li>
+							<li>
+								<a class="dropdown-item text-dark" href="{{ path('app_logout') }}">Me déconnecter</a>
+							</li>
+						{% else %}
+							<li>
+								<span class="dropdown-item text-dark">Votre compte n'est pas valide</span>
+							</li>
+							<li>
+								<a class="dropdown-item text-dark" href="{{ path('app_logout') }}">Me déconnecter</a>
+							</li>
+						{% endif %}
+					{% else %}
+						<li>
+							<a class="dropdown-item" href="/login">Connexion</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="/register">Demande d'inscription</a>
+						</li>
+					{% endif %}
+				</ul>
+			</li>
+		</ul>
+
+	</li>
+</li></ul></div></nav>

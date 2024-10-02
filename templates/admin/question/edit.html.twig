@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Béocler - Modifier les options de réponse
+{% endblock %}
+{% block javascripts %} <script src="{{ asset('js/deletechild.js')}}"></script>
+	 <script src="{{ asset('js/questionForm.js')}}"></script>
+{% endblock %}
+{% block body %}
+	<main class="container main-container">
+		<section class="row">
+			<h1>Modifier les options de réponse
+				{{question.templatequestion.instructionsFr}}</h1>
+			{% include "admin/question/_form.html.twig" with {'button_label': 'Enregistrer'} %}
+		</section>
+	</main>
+{% endblock %}
